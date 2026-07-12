@@ -12,6 +12,7 @@ function Eventos() {
 
   const [seleccion, setSeleccion] = useState({});
   const [inscritosPorEvento, setInscritosPorEvento] = useState({});
+  const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {
     cargarEventos();
@@ -141,6 +142,13 @@ function Eventos() {
       cargarInscritos(eventoId);
     }
   };
+  const eventosFiltrados = eventos.filter((evento) => {
+  const texto = busqueda.toLowerCase();
+  return (
+    evento.nombre.toLowerCase().includes(texto) ||
+    evento.lugar.toLowerCase().includes(texto)
+  );
+});
 
   return (
     <div className="container mt-4">
@@ -175,13 +183,25 @@ function Eventos() {
         )}
       </form>
 
-      {cargando ? (
-        <p>Cargando eventos...</p>
-      ) : eventos.length === 0 ? (
-        <p>No hay eventos registrados aún.</p>
-      ) : (
+      <div className="mb-3">
+  <input
+    type="text"
+    className="form-control"
+    placeholder="Buscar evento por nombre o lugar..."
+    value={busqueda}
+    onChange={(e) => setBusqueda(e.target.value)}
+  />
+</div>
+
+{cargando ? (
+  <p>Cargando eventos...</p>
+) : eventos.length === 0 ? (
+  <p>No hay eventos registrados aún.</p>
+) : eventosFiltrados.length === 0 ? (
+  <p>No se encontraron eventos que coincidan con la búsqueda.</p>
+) : (
         <div className="row">
-          {eventos.map((evento) => (
+  {eventosFiltrados.map((evento) => (
             <div className="col-md-6 mb-3" key={evento.id}>
               <div className="card">
                 <div className="card-body">
